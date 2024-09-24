@@ -18,14 +18,14 @@
     {% endif %}
 
     <h3>Choose an Affordable Wi-Fi Package</h3>
-    <div class="package-list" style="display: flex; flex-wrap: wrap;">
+    <div class="package-list">
         {% for package in packages %}
-            <div class="package-item" style="margin: 10px; padding: 20px; border: 1px solid #ddd; width: 200px;">
+            <div class="package-item">
                 <h4>{{ package.name }}</h4>
-                <p>Price: Ksh {{ package.price }}/-</p>
-                <p>Data: {{ package.data_limit }}</p>
-                <p>Minutes: {{ package.minutes_limit }}</p>
-
+                <p><strong>Price:</strong> Ksh {{ package.price }}/-</p>
+                <p><strong>Data:</strong> {{ package.data_limit }}</p>
+                <p><strong>Minutes:</strong> {{ package.minutes_limit }}</p>
+    
                 <form action="{% url 'purchase_plan' package.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="purchase-btn">Purchase</button>
@@ -33,38 +33,81 @@
             </div>
         {% endfor %}
     </div>
-</div>
-
-<style>
-    .balance-info {
-        background-color: #f0f8ff;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-    }
-    .package-list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-    }
-    .package-item {
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 10px;
-        text-align: center;
-    }
-    .purchase-btn {
-        background-color: #007bff;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .purchase-btn:hover {
-        background-color: #0056b3;
-    }
-</style>
+    
+    <style>
+        /* General Page Style */
+        h3 {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+    
+        /* Package List Styling */
+        .package-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+    
+        /* Individual Package Card */
+        .package-item {
+            width: 250px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+    
+        .package-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+        }
+    
+        /* Package Text Styling */
+        .package-item h4 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #007bff;
+        }
+    
+        .package-item p {
+            font-size: 16px;
+            color: #555;
+            margin: 10px 0;
+        }
+    
+        /* Purchase Button Styling */
+        .purchase-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+    
+        .purchase-btn:hover {
+            background-color: #218838;
+        }
+    
+        /* Balance Info Box Styling */
+        .balance-info {
+            background-color: #f0f8ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+    
 <p style="text-align: center; font-weight: fantasy;">Manage your account settings below:</p>
 <div class="button-container" style="display: flex; flex-direction: row; justify-content: center; padding: 20px;">
     <form action="{% url 'my_profile' %}" method="GET" style="padding-right:20px;">
