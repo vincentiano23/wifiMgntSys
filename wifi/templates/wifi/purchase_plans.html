@@ -1,0 +1,55 @@
+{% extends 'wifi/base.html' %}
+
+{% block title %}Purchase Plans {% endblock %}
+
+{% block content %}
+<h2 style="text-align: center; margin-top: 50px;">Your Purchased Plans</h2>
+
+<div class="purchased-packages" style="text-align: center; margin-bottom: 30px;">
+    {% if user_package %}
+        <h3>You are currently subscribed to:</h3>
+        <p><strong>Package Name:</strong> {{ user_package.package.name }}</p>
+        <p><strong>Price:</strong> {{ user_package.package.price }}/-</p>
+        <p><strong>Data Limit:</strong> {{ user_package.package.data_limit }}</p>
+        <p><strong>Minutes Limit:</strong> {{ user_package.package.minutes_limit }}</p>
+        <p><strong>Status:</strong> {% if user_package.is_online %}Online{% else %}Offline{% endif %}</p>
+    {% else %}
+        <p>You have not purchased any plans yet.</p>
+    {% endif %}
+</div>
+
+
+<div class="button-container" style="display: flex; flex-direction: row; justify-content: center; padding: 20px;">
+    <form action="{% url 'my_profile' %}" method="GET" style="padding-right:20px;">
+        <button type="submit" class="dashboard-btn" style="background-color: orange; border-radius: 20px;">My Profile</button>
+    </form>
+    <form action="{% url 'edit_profile' %}" method="GET" style="padding-right:20px;">
+        <button type="submit" class="dashboard-btn" style="background-color: orange; border-radius: 20px;">Edit Profile</button>
+    </form>
+    <form action="{% url 'password_change' %}" method="GET" style="padding-right:20px;">
+        <button type="submit" class="dashboard-btn" style="background-color: orange; border-radius: 20px;">Change Your Password</button>
+    </form>
+</div>
+
+<button onclick="alert('Call us at +254703292479/ +254742463773')" style="background-color: violet; padding-left: 20px; padding-right: 20px; border-radius: 20px; display: block; margin: 0 auto;">Call Us</button>
+
+<style>
+    .package-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .package-btn {
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+    }
+    .package-btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

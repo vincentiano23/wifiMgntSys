@@ -1,0 +1,174 @@
+{% extends 'wifi/base.html' %}
+{% load static %}
+
+{% block title %}Login - Wi-Fi Management{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Login to Your Account</h2>
+
+        <!-- Login Form -->
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Phone Number</label>
+                <input type="text" id="username" name="phone_number" class="form-control" placeholder="Enter your Phone Number" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="auth-btn">Login</button>
+            </div>
+
+            <!-- Forgot Password Link -->
+            <div class="forgot-password">
+                <a href="{% url 'password_reset' %}">Forgot your password?</a>
+            </div>
+        </form>
+
+        <!-- Register Link -->
+        <div class="register-link">
+            <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+        </div>
+    </div>
+
+    <!-- Display Wi-Fi Packages -->
+    {% comment %} <div class="packages-container">
+        <h3>Our Affordable Wi-Fi Plans</h3>
+        <ul class="packages-list">
+            <li><a href="{% url 'purchase_plan' package_id=1 %}">Monthly Unlimited - <strong>1000/-</strong></a></li>
+            <li><a href="{% url 'purchase_plan' package_id=2 %}">Monthly 30 GB - <strong>500/-</strong></a></li>
+            <li><a href="{% url 'purchase_plan' package_id=3 %}"> Daily 100MB - <strong>5/-</strong></a></li>
+            <li><a href="{% url 'purchase_plan' package_id=4 %}">Daily 2GB - <strong>30/-</strong></a></li>
+            <li><a href="{% url 'purchase_plan' package_id=5 %}">Weekly 2GB - <strong>50/-</strong></a></li>
+            <li><a href="{% url 'purchase_plan' package_id=6 %}">One Hour Unlimited - <strong>10/-</strong></a></li>
+            <li><a href="{% url 'purchase_plan' package_id=7 %}">Weekly Unlimited - <strong>300/-</strong><a/></li>
+            <li><a href="{% url 'purchase_plan' package_id=8 %}">Daily Fast Unlimited - <strong>50/-</strong></a></li>
+            <li><a href="{% url 'purchase_plan' package_id=9 %}">Moderate Daily Unlimited - <strong>50/-</strong></a></li>
+        </ul>
+    </div> {% endcomment %}
+
+    <!-- Below packages, maybe a prompt to log in to buy -->
+    <div class="auth-prompt" style="font-size: 20px;">
+        <p><a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">Register</a> to purchase a plan and start browsing.</p>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: auto;
+        margin-top: 30px;
+    }
+    .auth-box {
+        background-color: #f7f7f7;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+    }
+    h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .form-group label {
+        font-size: 14px;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+    .auth-btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    .auth-btn:hover {
+        background-color: #0056b3;
+    }
+    .forgot-password {
+        margin-bottom: 20px;
+    }
+    .forgot-password a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .forgot-password a:hover {
+        text-decoration: underline;
+    }
+    .register-link p {
+        margin-top: 20px;
+    }
+    .register-link a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* Packages List */
+    .packages-container {
+        margin-top: 50px;
+        width: 100%;
+        text-align: center;
+    }
+    .packages-container h3 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+    .packages-list {
+        list-style-type: none;
+        padding: 0;
+        font-size: 16px;
+    }
+    .packages-list li {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        font-size: 18px;
+    }
+    .packages-list li:last-child {
+        border-bottom: none;
+    }
+    .auth-prompt {
+        margin-top: 20px;
+        font-size: 14px;
+    }
+    .auth-prompt a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .auth-prompt a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

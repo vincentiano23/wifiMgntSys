@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Wi-Fi Management System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        /* Additional styling for registration successful message */
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            margin: 20px auto;
+            width: 80%;
+            text-align: center;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 30%;
+            margin: 0 auto;
+            padding-top: 80px;
+        }
+
+        .btn1, .btn2 {
+            background-color: blue;
+            padding-left: 50px;
+            padding-right: 50px;
+            border-radius: 30px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            color: white;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        .btn2 {
+            background-color: violet;
+        }
+
+        /* Styling for the footer */
+        .footer {
+            font-size: 20px;
+            font-family: fantasy;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background-color: #f1f1f1;
+            border-top: 1px solid #ccc;
+        }
+
+        .logo img {
+            width: 200px;
+            height: auto;
+            border-radius: 30px;
+        }
+
+        /* General container styling */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 30vh;
+        }
+    </style>
+</head>
+<body style="background-color:lightblue;">
+    <header>
+        <div class="logo" style="display: flex; flex-direction: row; align-items: center; justify-content: center; height: 30vh;">
+            <img src="{% static '/wifi/images/bruno wifi.png' %}" alt="Bruno Wi-Fi Logo">
+        </div>
+        <nav>
+            <div class="btn-container">
+                <form action="{% url 'login' %}" method="get">
+                    <button type="submit" class="btn1">Login</button>
+                </form>
+                
+                <form action="{% url 'register' %}" method="get">
+                    <button type="submit" class="btn2">Register</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% if messages %}
+            <div class="container">
+                {% for message in messages %}
+                    <div class="success-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        <!-- Page-specific content goes here -->
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>Copyright © BRUNO WIRELESS LIMITED</p>
+    </footer>
+</body>
+</html>

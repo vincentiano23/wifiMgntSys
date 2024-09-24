@@ -1,0 +1,38 @@
+{% extends 'wifi/base.html' %}
+
+{% block title %}Purchase Confirmation - Wi-Fi Management{% endblock %}
+
+{% block content %}
+<div class="confirmation-container">
+    <h2>Confirm Your Purchase</h2>
+    <p>Package: <strong>{{ package.name }}</strong></p>
+    <p>Price: <strong>Ksh {{ package.price }}/-</strong></p>
+    <p>Data: <strong>{{ package.data_limit }}</strong></p>
+    <p>Minutes: <strong>{{ package.minutes_limit }}</strong></p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="confirm-btn">Confirm Purchase</button>
+    </form>
+
+    <a href="{% url 'dashboard' %}">Cancel</a>
+</div>
+
+<style>
+    .confirmation-container {
+        text-align: center;
+        padding: 20px;
+    }
+    .confirm-btn {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .confirm-btn:hover {
+        background-color: #218838;
+    }
+</style>
+{% endblock %}

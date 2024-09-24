@@ -1,0 +1,86 @@
+{% extends 'wifi/base.html' %}
+
+{% block title %}Dashboard - Wi-Fi Management{% endblock %}
+
+{% block content %}
+<div class="dashboard-container" style="display: flex; flex-direction: column; align-items: center;">
+    <h2>Welcome, {{ user.username }}</h2>
+
+    <!-- Display user's current package and data balance -->
+    {% if user_package and user_package.is_online %}
+        <div class="balance-info" >
+            <p>You have <strong>{{ user_package.data_balance }}</strong> MBs and <strong>{{ user_package.minutes_balance }}</strong> minutes left.</p>
+            <p>Status: <strong>Currently Online</strong></p>
+        </div>
+    {% else %}
+        <p>You have <strong>0.00</strong> MBs and <strong>0</strong> minutes left.</p>
+        <p>Status: <strong>Offline</strong></p>
+    {% endif %}
+
+    <h3>Choose an Affordable Wi-Fi Package</h3>
+    <div class="package-list" style="display: flex; flex-wrap: wrap;">
+        {% for package in packages %}
+            <div class="package-item" style="margin: 10px; padding: 20px; border: 1px solid #ddd; width: 200px;">
+                <h4>{{ package.name }}</h4>
+                <p>Price: Ksh {{ package.price }}/-</p>
+                <p>Data: {{ package.data_limit }}</p>
+                <p>Minutes: {{ package.minutes_limit }}</p>
+
+                <form action="{% url 'purchase_plan' package.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="purchase-btn">Purchase</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .balance-info {
+        background-color: #f0f8ff;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    .package-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+    .package-item {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        text-align: center;
+    }
+    .purchase-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .purchase-btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+<p style="text-align: center; font-weight: fantasy;">Manage your account settings below:</p>
+<div class="button-container" style="display: flex; flex-direction: row; justify-content: center; padding: 20px;">
+    <form action="{% url 'my_profile' %}" method="GET" style="padding-right:20px;">
+        <button type="submit" class="dashboard-btn" style="background-color: orange; border-radius: 20px;">My Profile</button>
+    </form>
+    <form action="{% url 'edit_profile' %}" method="GET" style="padding-right:20px;">
+        <button type="submit" class="dashboard-btn" style="background-color: orange; border-radius: 20px;">Edit Profile</button>
+    </form>
+    <form action="{% url 'password_change' %}" method="GET" style="padding-right:20px;">
+        <button type="submit" class="dashboard-btn" style="background-color: orange; border-radius: 20px;">Change Your Password</button>
+    </form>
+    <form action="{% url 'purchase_plans' %}" method="GET" style="padding-right:20px;">
+        <button type="submit" class="dashboard-btn" style="background-color: orange; border-radius: 20px;">Purchase Plans</button>
+    </form>
+</div>
+
+<button onclick="alert('Call us at +254703292479/ +254742463773')" style="background-color: violet; padding-left: 20px; padding-right: 20px; border-radius: 20px; display: block; margin: 0 auto;">Call Us</button>
+
+{% endblock %}

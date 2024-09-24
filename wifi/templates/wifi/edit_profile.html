@@ -1,0 +1,63 @@
+{% extends 'wifi/base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <h2>Edit Profile</h2>
+
+    <form method="POST" action="{% url 'edit_profile' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="dashboard-btn">Save Changes</button>
+        </div>
+    </form>
+
+    <div class="button-container">
+        <form action="{% url 'my_profile' %}">
+            <button type="submit" class="dashboard-btn">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .edit-profile-container {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .form-group {
+        margin: 20px 0;
+    }
+
+    input {
+        padding: 10px;
+        width: 80%;
+        max-width: 400px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .dashboard-btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .dashboard-btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

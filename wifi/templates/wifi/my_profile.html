@@ -1,0 +1,42 @@
+{% extends 'wifi/base.html' %}
+{% load static %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <h2>My Profile</h2>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+
+    <div class="button-container">
+        <form action="{% url 'dashboard' %}">
+            <button type="submit" class="dashboard-btn">Back to Dashboard</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .button-container {
+        margin-top: 20px;
+    }
+
+    .dashboard-btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .dashboard-btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

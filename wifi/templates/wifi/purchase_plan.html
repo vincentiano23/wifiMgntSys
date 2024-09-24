@@ -1,0 +1,13 @@
+{% extends 'wifi/base.html' %}
+{% block content %}
+<h2>Purchase {{ package.name }}</h2>
+<p>Price: {{ package.price }}/-</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <label for="phone_number">Enter your phone number:</label>
+    <input type="text" name="phone_number" required>
+    
+    <button type="submit">Pay Now</button>
+</form>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'wifi/base.html' %}
+{% load static %}
+
+{% block title %}Registration Successful{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-box">
+        <h2>Registration Successful!</h2>
+        <p>Your account has been created successfully. You can now log in to access your account and purchase a Wi-Fi plan.</p>
+
+        <!-- Login Button -->
+        <a href="{% url 'login' %}" class="btn-primary">Log In</a>
+
+        <!-- Home Button -->
+        <a href="{% url 'home' %}" class="btn-secondary">Return to Home</a>
+    </div>
+</div>
+
+<style>
+    .success-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 80vh;
+        margin-top: 30px;
+    }
+    .success-box {
+        background-color: #f7f7f7;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+    h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #28a745;
+    }
+    p {
+        margin-bottom: 30px;
+        font-size: 16px;
+    }
+    .btn-primary {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    .btn-secondary {
+        padding: 10px 20px;
+        background-color: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        display: inline-block;
+    }
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+</style>
+{% endblock %}
