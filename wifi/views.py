@@ -1,111 +1,142 @@
+
 from django.http import JsonResponse
 import logging
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Package, UserPackage
-from .forms import CustomUserCreationForm, UserProfileForm
+from .forms import ContactAdminForm, CustomUserCreationForm, ResolvePaymentForm, UserProfileForm
 from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 from requests.auth import HTTPBasicAuth
 import datetime
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 import base64
 
 logger = logging.getLogger(__name__)
 
-# Safaricom API credentials (sandbox or live)
-CONSUMER_KEY = 'NbOWGeZ1mjQlBtILhUZoWltCXD4DEGjPYpjwYmC1unADUtEV' 
-CONSUMER_SECRET = 'ELSkcAFo4UHikX2jXbIT6pdAsMk0hbYqd3adsM4zzASgI55qAgQTkSECVKAWllII' 
-BUSINESS_SHORT_CODE = "174379"  
-LIPA_NA_MPESA_ONLINE_URL = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
-API_BASE_URL = "https://sandbox.safaricom.co.ke"
-VALIDATION_URL = "https://mydomain.com/validation"
-CONFIRMATION_URL = "https://mydomain.com/confirmation"
 
+CONSUMER_KEY = '' 
+CONSUMER_SECRET = '' 
+api_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
 
 def get_access_token():
-    """Fetch access token for Safaricom API"""
-    api_url = f'{API_BASE_URL}/oauth/v1/generate?grant_type=client_credentials'
-    try:
-        response = requests.get(api_url, auth=HTTPBasicAuth(CONSUMER_KEY, CONSUMER_SECRET))
-        if response.status_code == 200:
-            access_token = response.json().get('access_token')
-            if access_token:
-                logger.info("Access token successfully retrieved.")
-                return access_token
-            else:
-                raise ValueError("Access token not received.")
-        else:
-            logger.error(f"Failed to get access token. Status code: {response.status_code}, Response: {response.text}")
-            raise ValueError(f"Error: {response.status_code}")
-    except Exception as e:
-        logger.error(f"Exception occurred while fetching access token: {e}")
-        raise
-
-
-def get_timestamp():
-    return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-
+    consumer_key = ''  
+    consumer_secret = ''  
+    api_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+    
+    response = requests.get(api_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
+    if response.status_code == 200:
+        return response.json().get('access_token')
+    else:
+        raise Exception("Failed to get access token")
 
 def generate_password(shortcode, passkey, timestamp):
     data_to_encode = shortcode + passkey + timestamp
     return base64.b64encode(data_to_encode.encode('utf-8')).decode('utf-8')
 
 
-@login_required
+def get_timestamp():
+    return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+
+def stk_push_customer_buy_goods(phone_number, amount):
+    # Safaricom test credentials (Sandbox)
+    business_short_code = "174379"  # This is the sandbox till number for Buy Goods
+    passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
+    lipa_na_mpesa_online_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+    callback_url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl"  # Your callback URL
+    timestamp = get_timestamp()
+    password = generate_password(business_short_code, passkey, timestamp)
+
+    # Fetch access token
+    access_token = get_access_token()
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    
+    payload = {
+        "BusinessShortCode":  "174379",
+        "Password": password,
+        "Timestamp": timestamp,
+        "TransactionType": "CustomerBuyGoodsOnline", 
+        "Amount": "1",
+        "PartyA": "254703292479",  
+        "PartyB": "174379", 
+        "PhoneNumber": "254703292479", 
+        "CallBackURL": callback_url,
+        "AccountReference": "TestBuyGoods",
+        "TransactionDesc": "LipaMnet"
+    }
+
+    
+    response = requests.post(lipa_na_mpesa_online_url, json=payload, headers=headers)
+
+    response_data = response.json()
+    print(response_data)
+    return response_data
+
+
+
 def purchase_plan(request, package_id):
-    """Handles the Lipa na M-Pesa Online payment process"""
+ 
     package = get_object_or_404(Package, id=package_id)
 
     if request.method == 'POST':
-        phone_number = request.POST.get('254708374149')  
+        phone_number = request.POST.get('phone_number')
 
-    
-        passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-        callback_url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl"  # Provide your actual callback URL here
-        timestamp = get_timestamp()
-        password = generate_password(BUSINESS_SHORT_CODE, passkey, timestamp)
+        # Your STK push implementation here
+        # For example:
+        response = stk_push_customer_buy_goods(phone_number, package.price)
 
-
-        access_token = get_access_token()  
-        headers = {"Authorization": f"Bearer {access_token}"}
-
-    #    600992
-        payload = {
-            "BusinessShortCode": "8074896",
-            "Password": password,
-            "Timestamp": timestamp,
-            "TransactionType": "CustomerBuyGoodsOnline",
-            "Amount": "1",  
-            "PartyA":"254704863390", 
-            "PartyB": "",
-            "PhoneNumber": "254704863390",
-            "CallBackURL": callback_url,
-            "AccountReference": "LipaMnet",  
-            "TransactionDesc": "Test"
-        }
-
-        response = requests.post(LIPA_NA_MPESA_ONLINE_URL, json=payload, headers=headers)
-        logger.info(f"STK Push Response: {response.text}")
-        response_data = response.json()
-
-        print("==================================================================================")
-        print(response.text)
-
-        if response_data.get('ResponseCode') == '0':
+        # Check response and handle messages
+        if response.get('ResponseCode') == '0':
             messages.success(request, "Payment initiated successfully. Please check your phone to complete the transaction.")
             return redirect('dashboard')
         else:
-            messages.error(request, f"Payment failed: {response_data.get('ResponseDescription', 'Unknown error.')}")
+            messages.error(request, "Payment failed: " + response.get('ResponseDescription', 'Unknown error.'))
 
     return render(request, 'wifi/purchase_confirmation.html', {'package': package})
 
 
+# def payment_issue(request):
+#     if request.method == 'POST':
+#         payment_form = ResolvePaymentForm(request.POST)
+#         admin_form = ContactAdminForm(request.POST)
+        
+#         if 'submit_payment' in request.POST and payment_form.is_valid():
+#             # Handle payment form submission logic
+#             pass
+        
+#         if 'send_message' in request.POST and admin_form.is_valid():
+#             # Handle admin message submission logic
+#             pass
+#     else:
+#         payment_form = ResolvePaymentForm()
+#         admin_form = ContactAdminForm()
+
+#     return render(request, 'wifi/payment_issue.html', {'payment_form': payment_form, 'admin_form': admin_form})
+
+@login_required
+def purchase_goods(request, amount):
+    phone_number = request.POST.get('phone_number')
+
+    if request.method == 'POST':
+        try:
+            response_data = stk_push_customer_buy_goods(phone_number, amount)
+            if response_data.get('ResponseCode') == '0':
+                messages.success(request, "Payment initiated successfully. Please check your phone to complete the transaction.")
+                return redirect('dashboard')
+            else:
+                messages.error(request, "Payment failed: " + response_data.get('ResponseDescription', 'Unknown error.'))
+        except Exception as e:
+            messages.error(request, f"Error initiating payment: {e}")
+
+    return render(request, 'wifi/purchase_confirmation.html')
+
 @csrf_exempt
 def payment_callback(request):
-    """Handle the callback from MPESA STK push"""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -116,7 +147,9 @@ def payment_callback(request):
 
             if result_code == 0:  # Successful transaction
                 callback_metadata = stk_callback.get('CallbackMetadata', {}).get('Item', [])
-                amount = receipt_number = phone_number = None
+                amount = None
+                receipt_number = None
+                phone_number = None
 
                 for item in callback_metadata:
                     if item['Name'] == 'Amount':
@@ -126,15 +159,8 @@ def payment_callback(request):
                     elif item['Name'] == 'PhoneNumber':
                         phone_number = item['Value']
 
-                logger.info(f"Parsed metadata - Amount: {amount}, Receipt: {receipt_number}, Phone: {phone_number}")
-
-                user_package = UserPackage.objects.filter(user__profile__phone_number=phone_number).first()
-                if user_package:
-                    user_package.is_online = True
-                    user_package.payment_status = "Completed"
-                    user_package.mpesa_receipt = receipt_number
-                    user_package.amount_paid = amount
-                    user_package.save()
+                # Process successful payment here, e.g., update order status
+                logger.info(f"Payment successful - Amount: {amount}, Receipt: {receipt_number}, Phone: {phone_number}")
 
                 return JsonResponse({"status": "Success", "message": "Payment processed successfully."})
 
@@ -148,55 +174,6 @@ def payment_callback(request):
     logger.error("Invalid request method.")
     return JsonResponse({"status": "Error", "message": "Invalid request method."}, status=400)
 
-
-@login_required
-def initiate_c2b_payment(request, package_id):
-    """Initiate C2B Payment using PayBill for a selected package"""
-    package = get_object_or_404(Package, id=package_id)
-
-    if request.method == 'POST':
-        phone_number = request.POST.get('phone_number').replace("+", "").strip()
-        amount = request.POST.get('amount')  
-
-       
-        access_token = get_access_token()
-        headers = {"Authorization": f"Bearer {access_token}"}
-
-        payload = {
-            "ShortCode": BUSINESS_SHORT_CODE,
-            "CommandID": "CustomerPayBillOnline",
-            "Amount": amount,
-            "Msisdn": 254703292479, 
-            "BillRefNumber": "Test123"  
-        }
-
-      
-        response = requests.post(LIPA_NA_MPESA_ONLINE_URL, json=payload, headers=headers)
-        response_data = response.json()
-
-        if response.status_code == 200 and response_data.get('ResponseCode') == '0':
-            messages.success(request, "Payment initiated successfully.")
-            return redirect('dashboard')
-        else:
-            logger.error(f"Payment failed: {response.text}")
-            messages.error(request, "Payment initiation failed. Please try again.")
-
-    return render(request, 'wifi/purchase_confirmation.html', {'package': package})
-
-
-@csrf_exempt
-def validation_url(request):
-    """Handles payment validation for C2B"""
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        logger.info(f"Validation request received: {data}")
-
-        response = {
-            "ResultCode": 0,
-            "ResultDesc": "Validation successful"
-        }
-        return JsonResponse(response)
-    return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid request method"}, status=400)
 
 def register(request):
     if request.method == 'POST':
@@ -265,8 +242,22 @@ def edit_profile(request):
 
 @login_required
 def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+             user = form.save()
+             update_session_auth_hash(request, user)
+             messages.success(request,"your password has been changed successfully")
+             return redirect('wifi/change_password_successful.html')
+        else:
+            messages.error(request, "please correct the errors below")
+    else:
+        form = PasswordChangeForm(request.user)
+    
     return render(request, 'wifi/change_password.html')
 
+def change_password_successful(request):
+    return render(request,'wifi/change_password_successful.html')
 @login_required
 def purchase_plans(request):
     try:
@@ -284,3 +275,7 @@ def purchase_plans(request):
 def purchase_confirmation(request):
     return render(request, 'wifi/purchase_confirmation.html')
 
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')

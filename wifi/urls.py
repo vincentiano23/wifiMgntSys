@@ -18,10 +18,13 @@ urlpatterns = [
     path('my-profile/', views.my_profile, name='my_profile'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
     path('change-password/', views.change_password, name='password_change'),
+    path('change_password_successful/', views.change_password_successful,name='change_password_successful'),
 
     path('purchase/<int:package_id>/', views.purchase_plan, name='purchase_plan'),
     path('purchase-confirmation/', views.purchase_confirmation, name='purchase_confirmation'),
+    # path('payment_issue/',views.payment_issue, name= "payment_issue"),
 
     path('payment-callback/', views.payment_callback, name='payment_callback'),
     path('purchase-plans/', views.purchase_plans, name='purchase_plans'),
+    path('logout/', views.logout_view, name='logout'),
 ]
