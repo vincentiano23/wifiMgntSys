@@ -20,3 +20,11 @@ class UserPackage(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Package"
+    
+    class RouterConfigurationStatus(models.Model):
+        status = models.BooleanField(default=False)
+        created_at = models.DateTimeField(auto_now_add=True)
+
+        def __str__(self):
+            return f"Router Configuration {'Successful' if self.status else 'failed' }"
+        

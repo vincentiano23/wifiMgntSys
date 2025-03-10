@@ -20,7 +20,7 @@ class CustomUserCreationForm(UserCreationForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = [ 'username', 'email']
+        fields = ['username', 'email']
 
 class ResolvePaymentForm(forms.Form):
     mpesa_code = forms.CharField(label='Mpesa Transaction Code', max_length=12, widget=forms.TextInput(attrs={'placeholder': 'eg. NDE18APSTL'}))

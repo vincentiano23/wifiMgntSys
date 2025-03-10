@@ -17,6 +17,15 @@
         <p>Status: <strong>Offline</strong></p>
     {% endif %}
 
+     <div class = "check_router_configuration">
+        {% if router_status == "Configuration Successful" %}
+        <p style="color: green;">Router Configuration Successful.</p>
+        {% else %}
+        <p style="color: red;">{{ router_status }}</p>
+        {% endif %}
+
+     </div>
+
     <h3>Choose an Affordable Wi-Fi Package</h3>
     <div class="package-list">
         {% for package in packages %}
@@ -132,5 +141,6 @@
 </div>
 
 <button onclick="alert('Call us at +254703292479/ +254742463773')" style="background-color: violet; padding-left: 20px; padding-right: 20px; border-radius: 20px; display: block; margin: 0 auto;">Call Us</button>
+
 
 {% endblock %}

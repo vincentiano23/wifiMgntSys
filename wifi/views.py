@@ -6,33 +6,88 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Package, UserPackage
-from .forms import ContactAdminForm, CustomUserCreationForm, ResolvePaymentForm, UserProfileForm
+from .forms import CustomUserCreationForm, UserProfileForm
 from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 from requests.auth import HTTPBasicAuth
 import datetime
+from .utils import configure_router
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 import base64
+from django.shortcuts import render
+from librouteros import connect
+
+
 
 logger = logging.getLogger(__name__)
 
+def configure_router(data):
+    """
+    Utility function to configure the MikroTik router.
+    Connects to the router and applies the configuration.
+    """
+    try:
+        # Establish a connection with the router
+        connection = connect(
+            host=data["host"],
+            username=data["username"],
+            password=data["password"]
+        )
+        # Access the RouterOS API
+        api = connection(cmd="/ip/address/add", address=data["src_address"])
+        return "Router configured successfully."
+    except Exception as e:
+        logger.error(f"Error configuring router: {e}")
+        raise Exception("Failed to configure the router. Please check the credentials and network settings.")
 
-CONSUMER_KEY = '' 
-CONSUMER_SECRET = '' 
+def router_configuration(request):
+    """
+    View to handle MikroTik router configuration.
+    Accepts POST data and calls the utils function to configure the router.
+    """
+    if request.method == "POST":
+        # Collect data from the form
+        router_ip = request.POST.get("router_ip")
+        username = request.POST.get("username", "admin")  # Default username
+        password = request.POST.get("password", "")       # Ensure password is not hardcoded
+        src_address = request.POST.get("src_address", "192.168.20.1/24")  # Default source address
+
+        # Prepare data dictionary
+        data = {
+            "host": router_ip,
+            "username": username,
+            "password": password,
+            "src_address": src_address,
+        }
+
+        try:
+            # Call the utility function to configure the router
+            message = configure_router(data)
+            messages.success(request, message)
+        except Exception as e:
+            messages.error(request, f"Router configuration failed: {e}")
+        
+        return redirect("dashboard")  # Redirect back to the dashboard
+
+    # Render the router configuration form
+    return render(request, "wifi/router_config.html")
+
+   
+
+consumer_key = 'NbOWGeZ1mjQlBtILhUZoWltCXD4DEGjPYpjwYmC1unADUtEV'  
+consumer_secret = 'ELSkcAFo4UHikX2jXbIT6pdAsMk0hbYqd3adsM4zzASgI55qAgQTkSECVKAWllII'  
 api_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
 
 def get_access_token():
-    consumer_key = ''  
-    consumer_secret = ''  
-    api_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
-    
     response = requests.get(api_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
     if response.status_code == 200:
         return response.json().get('access_token')
     else:
         raise Exception("Failed to get access token")
+
+   
 
 def generate_password(shortcode, passkey, timestamp):
     data_to_encode = shortcode + passkey + timestamp
@@ -62,7 +117,7 @@ def stk_push_customer_buy_goods(phone_number, amount):
         "Timestamp": timestamp,
         "TransactionType": "CustomerBuyGoodsOnline", 
         "Amount": "1",
-        "PartyA": "254703292479",  
+        "PartyA": "254742463773",
         "PartyB": "174379", 
         "PhoneNumber": "254703292479", 
         "CallBackURL": callback_url,
@@ -76,7 +131,6 @@ def stk_push_customer_buy_goods(phone_number, amount):
     response_data = response.json()
     print(response_data)
     return response_data
-
 
 
 def purchase_plan(request, package_id):
@@ -99,24 +153,6 @@ def purchase_plan(request, package_id):
 
     return render(request, 'wifi/purchase_confirmation.html', {'package': package})
 
-
-# def payment_issue(request):
-#     if request.method == 'POST':
-#         payment_form = ResolvePaymentForm(request.POST)
-#         admin_form = ContactAdminForm(request.POST)
-        
-#         if 'submit_payment' in request.POST and payment_form.is_valid():
-#             # Handle payment form submission logic
-#             pass
-        
-#         if 'send_message' in request.POST and admin_form.is_valid():
-#             # Handle admin message submission logic
-#             pass
-#     else:
-#         payment_form = ResolvePaymentForm()
-#         admin_form = ContactAdminForm()
-
-#     return render(request, 'wifi/payment_issue.html', {'payment_form': payment_form, 'admin_form': admin_form})
 
 @login_required
 def purchase_goods(request, amount):
@@ -249,8 +285,11 @@ def change_password(request):
              update_session_auth_hash(request, user)
              messages.success(request,"your password has been changed successfully")
              return redirect('wifi/change_password_successful.html')
+            
         else:
+           
             messages.error(request, "please correct the errors below")
+            print("Form errors:", form.errors)
     else:
         form = PasswordChangeForm(request.user)
     
@@ -258,6 +297,7 @@ def change_password(request):
 
 def change_password_successful(request):
     return render(request,'wifi/change_password_successful.html')
+
 @login_required
 def purchase_plans(request):
     try:

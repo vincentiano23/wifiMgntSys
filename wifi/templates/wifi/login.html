@@ -13,12 +13,12 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required autocomplete="">
             </div>
 
             <div class="form-group">
-                <label for="username">Phone Number</label>
-                <input type="text" id="username" name="phone_number" class="form-control" placeholder="Enter your Phone Number" required>
+                <label for="phone_number">Phone Number</label>
+                <input type="text" id="phone_number" name="phone_number" class="form-control" placeholder="Enter your Phone Number" required>
             </div>
 
             <div class="form-group">
@@ -71,20 +71,24 @@
         align-items: center;
         flex-direction: column;
         height: auto;
-        margin-top: 30px;
+        margin: 0;
+        
+        
     }
     .auth-box {
         background-color: #f7f7f7;
-        padding: 30px;
+        padding: 10px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
+        max-width: 450px;
         width: 100%;
         text-align: center;
     }
     h2 {
         margin-bottom: 20px;
         font-size: 24px;
+        color: goldenrod;
+       
     }
     .form-group {
         margin-bottom: 20px;
