@@ -11,4 +11,5 @@ sqlparse==0.5.3
 toml==0.10.2
 tzdata==2025.1
 urllib3==1.26.20
+waitress==3.0.2
 whitenoise==6.9.0
