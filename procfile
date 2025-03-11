@@ -1,0 +1,1 @@
+web: gunicorn wifi_management.wsgi:application
