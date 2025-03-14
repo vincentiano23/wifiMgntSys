@@ -224,7 +224,7 @@ def register(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, f"Account created successfully for {username}!")
-                return redirect('dashboard')  
+                return redirect('login')  
         else:
             for msg in form.errors.values():
                 messages.error(request, msg)
