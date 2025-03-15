@@ -1,12 +1,12 @@
 {% extends 'wifi/base.html' %}
 {% load static %}
 
-{% block title %}Login - Wi-Fi Management{% endblock %}
+{% block title %}Wi-Fi Management{% endblock %}
 
 {% block content %}
 <div class="auth-container">
     <div class="auth-box">
-        <h2>Login to Your Account</h2>
+        <h2>Login</h2>
 
         <!-- Login Form -->
         <form method="POST" action="{% url 'login' %}">
@@ -42,137 +42,174 @@
         </div>
     </div>
 
-    <!-- Display Wi-Fi Packages -->
-    {% comment %} <div class="packages-container">
-        <h3>Our Affordable Wi-Fi Plans</h3>
-        <ul class="packages-list">
-            <li><a href="{% url 'purchase_plan' package_id=1 %}">Monthly Unlimited - <strong>1000/-</strong></a></li>
-            <li><a href="{% url 'purchase_plan' package_id=2 %}">Monthly 30 GB - <strong>500/-</strong></a></li>
-            <li><a href="{% url 'purchase_plan' package_id=3 %}"> Daily 100MB - <strong>5/-</strong></a></li>
-            <li><a href="{% url 'purchase_plan' package_id=4 %}">Daily 2GB - <strong>30/-</strong></a></li>
-            <li><a href="{% url 'purchase_plan' package_id=5 %}">Weekly 2GB - <strong>50/-</strong></a></li>
-            <li><a href="{% url 'purchase_plan' package_id=6 %}">One Hour Unlimited - <strong>10/-</strong></a></li>
-            <li><a href="{% url 'purchase_plan' package_id=7 %}">Weekly Unlimited - <strong>300/-</strong><a/></li>
-            <li><a href="{% url 'purchase_plan' package_id=8 %}">Daily Fast Unlimited - <strong>50/-</strong></a></li>
-            <li><a href="{% url 'purchase_plan' package_id=9 %}">Moderate Daily Unlimited - <strong>50/-</strong></a></li>
-        </ul>
-    </div> {% endcomment %}
-
-    <!-- Below packages, maybe a prompt to log in to buy -->
-    <div class="auth-prompt" style="font-size: 20px;">
+    <!-- Prompt for login -->
+    <div class="auth-prompt">
         <p><a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">Register</a> to purchase a plan and start browsing.</p>
     </div>
 </div>
 
 <style>
+    /* General Styles */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f3f4f6;
+    }
+
     .auth-container {
         display: flex;
         justify-content: center;
         align-items: center;
+        margin-top: 90px;
         flex-direction: column;
-        height: auto;
-        margin: 0;
-        
-        
-    }
-    .auth-box {
-        background-color: #f7f7f7;
+        height: 70vh;
         padding: 10px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 450px;
+    }
+
+    .auth-box {
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         width: 100%;
+        max-width: 400px;
         text-align: center;
     }
+
     h2 {
         margin-bottom: 20px;
         font-size: 24px;
         color: goldenrod;
-       
     }
+
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         text-align: left;
     }
+
     .form-group label {
         font-size: 14px;
         margin-bottom: 5px;
         display: block;
+        color: #333;
     }
+
     .form-group input {
         width: 100%;
-        padding: 10px;
+        padding: 5px;
         font-size: 14px;
         border-radius: 5px;
         border: 1px solid #ddd;
     }
+
     .auth-btn {
-        padding: 10px 20px;
+        padding: 12px 20px;
         background-color: #007bff;
         color: white;
         text-decoration: none;
         border-radius: 5px;
         font-size: 16px;
         width: 100%;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
+
     .auth-btn:hover {
         background-color: #0056b3;
     }
+
     .forgot-password {
         margin-bottom: 20px;
     }
+
     .forgot-password a {
         color: #007bff;
         text-decoration: none;
     }
+
     .forgot-password a:hover {
         text-decoration: underline;
     }
+
     .register-link p {
         margin-top: 20px;
     }
+
     .register-link a {
         color: #007bff;
         text-decoration: none;
     }
+
     .register-link a:hover {
         text-decoration: underline;
     }
 
-    /* Packages List */
-    .packages-container {
-        margin-top: 50px;
-        width: 100%;
-        text-align: center;
-    }
-    .packages-container h3 {
-        font-size: 22px;
-        margin-bottom: 20px;
-    }
-    .packages-list {
-        list-style-type: none;
-        padding: 0;
-        font-size: 16px;
-    }
-    .packages-list li {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-        font-size: 18px;
-    }
-    .packages-list li:last-child {
-        border-bottom: none;
-    }
     .auth-prompt {
         margin-top: 20px;
         font-size: 14px;
     }
+
     .auth-prompt a {
         color: #007bff;
         text-decoration: none;
     }
+
     .auth-prompt a:hover {
         text-decoration: underline;
     }
+
+    /* Responsive Styles */
+    @media (max-width: 600px) {
+        .auth-box {
+            padding: 20px;
+            max-width: 95%;
+        }
+
+        h2 {
+            font-size: 20px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+        }
+
+        .form-group input {
+            font-size: 14px;
+        }
+
+        .auth-btn {
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .register-link p {
+            font-size: 14px;
+        }
+
+        .auth-prompt {
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .auth-box {
+            padding: 15px;
+            max-width: 90%;
+        }
+
+        h2 {
+            font-size: 18px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+        }
+
+        .auth-btn {
+            font-size: 12px;
+            padding: 8px;
+        }
+    }
 </style>
+
 {% endblock %}
