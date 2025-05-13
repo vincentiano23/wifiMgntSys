@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-my+*rzvi!_gn-!kdyxm5b1g88dce%_d!))cayj&usw-r4-33%n
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'brunowireless.onrender.com',  
+    'wifimgntsys.onrender.com',  
     '127.0.0.1',  
 ]
 
