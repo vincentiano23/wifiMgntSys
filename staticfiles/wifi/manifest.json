@@ -7,7 +7,7 @@
   "theme_color": "#0A0302",
   "icons": [
     {
-      "src": "/static/wifi/images/bruno_wifi.png",
+      "src": "/static/wifi/images/bruno_wifi_512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
