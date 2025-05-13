@@ -106,6 +106,10 @@
     </style>
 </head>
 <body>
+<div class="text-center my-3">
+    <button id="installBtn" class="btn btn-success" style="display: none;">📲 Install App</button>
+</div>
+
 
     <!-- Logo Section -->
     {% comment %} <header class="logo">
@@ -145,6 +149,32 @@
                     console.error('❌ ServiceWorker registration failed:', error);
                 });
         }
+
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        // Show your install button here
+        const installBtn = document.getElementById('installBtn');
+        installBtn.style.display = 'block';
+
+        installBtn.addEventListener('click', () => {
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
+
+            deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('✅ User accepted install prompt');
+            } else {
+                console.log('❌ User dismissed install prompt');
+            }
+            deferredPrompt = null;
+            });
+        });
+        });
+
     </script>
 
 </body>
